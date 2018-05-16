@@ -117,12 +117,12 @@ dsloc <- "data"
 
 dsname %s+% ".csv" %>%
   file.path(dsloc, .) %T>%
-  cat("\n\n") %T>%
+  cat("Dataset:", . "\n\n") %T>%
   {
      paste("head", .) %>%
      system(intern=TRUE) %>%
      sub("\r", "\n", .) %>%
-     cat()
+     print()
   } ->
 dspath
 
@@ -222,7 +222,7 @@ fpath <- "data"
 
 dsname %s+% ".RData" %>%
   file.path(fpath, .) %T>%
-  cat("\n\n") ->
+  cat("Saving:", ., "\n\n") ->
 fname
 
 if (! dir.exists(fpath))  dir.create(fpath)
