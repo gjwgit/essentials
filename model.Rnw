@@ -12,6 +12,10 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 <<dtmpl:introduction, echo=FALSE>>=
 # Welcome to the Togaware Data Science Model Template ----
 #
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
+#
 # Australian Weather Dataset.
 # General Model Setup.
 #
@@ -174,6 +178,10 @@ te.risk   <- ds[test,][[risk]]       %T>% {head(., 20) %>% print()}
 
 <<dtmpl:62_rpart, echo=FALSE>>=
 # Welcome to the Togaware Data Science Model Template.
+#
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
 #
 # Australian Weather Dataset.
 # Decision Tree Classification.
@@ -451,6 +459,10 @@ rocChart(te.prob, te.target)
 <<dtmpl:64_rf, echo=FALSE>>=
 # Welcome to the Togaware Data Science Model Template.
 #
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
+#
 # Australian Weather Dataset.
 # Random Forest Classification.
 #
@@ -698,6 +710,10 @@ rocChart(te.prob, te.target)
 
 <<dtmpl:72_lmer, echo=FALSE>>=
 # Welcome to the Togaware Data Science Model Template.
+#
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
 #
 # Australian Weather Dataset.
 # Mixed Effects Regression Model.
