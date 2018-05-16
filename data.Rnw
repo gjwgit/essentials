@@ -13,6 +13,10 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 <<dtmpl:00_setup, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
+#
 # Australian Weather Dataset.
 # General Setup.
 #
@@ -63,6 +67,10 @@ library(xtable)       # Generate LaTeX tables.
 
 <<dtmpl:10_ingest, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template
+#
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
 #
 # Australian Weather Dataset.
 # Data Ingestion.
@@ -240,6 +248,10 @@ rm(weatherAUS)
 <<dtmpl:20_observe, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
+#
 # Australian Weather Dataset.
 # Data Observation.
 #
@@ -300,6 +312,10 @@ enough.
 
 <<dtmpl:30_prepare, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
+#
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
 #
 # Australian Weather Dataset.
 # Data Wrangling.
@@ -816,6 +832,10 @@ ds %>%
 <<dtmpl:40_meta, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
+#
 # Australian Weather Dataset.
 # Data Preparation.
 #
@@ -903,6 +923,10 @@ catc
 
 <<dtmpl:50_save, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
+#
+# Refer to the book, The Essentials of Data Science available
+# from Amazon at https://amzn.to/2L35wPe, and the web site
+# https://essentials.togaware.com for more details.
 #
 # Australian Weather Dataset.
 # Cache the Data to Disk.
