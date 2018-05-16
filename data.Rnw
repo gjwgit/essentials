@@ -36,7 +36,7 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2017 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -91,7 +91,7 @@ library(xtable)       # Generate LaTeX tables.
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Literate Data Science Using R from CRC Press.
 #
-# Copyright (c) 2014-2017 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -137,16 +137,17 @@ dspath %>%
 \title{Data Preparation Template\\
   The \textbf{\Sexpr{dsname}} Dataset}
 \author{Graham Williams}
-\date{2 July 2017}
+\date{2 July 2018}
 \maketitle\thispagestyle{empty}
 
 \section{Introduction}
 
 This template provides a guide to the typical sequence of steps a data
-scientist begins with in analyzing a new dataset. See \textit{Literate
-  Data Science With R} (2017) for details. The sequence is extracted
-into separate files, corresponding to the logical steps along the
-way. Each can be run sequentially.
+scientist begins with in analyzing a new dataset. See
+\href{https://amzn.to/2L35wPe}{The Essentials of Data Science With R}
+(2017) for details. The sequence is extracted into separate files,
+corresponding to the logical steps along the way. Each can be run
+sequentially.
 
 We collect here the packages used throughout this document.
 
