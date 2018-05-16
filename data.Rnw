@@ -104,18 +104,18 @@ library(xtable)       # Generate LaTeX tables.
 dsname <- "weatherAUS"
 
 # Identify the source location of the dataset.
-# Here we identify a number of alternatives.
 
 dsloc <- "data"
 
+# Other common alternatives include:
+#
 # dsloc <- "C:/Users/graham/Projects"
 # dsloc <- "~/projects"
 # dsloc <- "http://rattle.togaware.com"
 
 # Construct the path to the dataset and display some if it.
 
-dsname %>%
-  paste0(".csv") %>%
+dsname %s+% ".csv" %>%
   file.path(dsloc, .) %T>%
   cat("\n\n") %T>%
   {
@@ -215,7 +215,16 @@ for this dataset takes just a second.
 # Save the dataset to disk as a binary R Data for backup.
 
 fpath <- "data"
-fname <- file.path(fpath, dsname %s+% ".RData") %T>% print() %%UPDATE TO ESSENTIALS%%XXXXXXXX
+
+# Other common alternatives include:
+#
+# fpath <- dsloc
+
+dsname %s+% ".RData" %>%
+  file.path(fpath, .) %T>%
+  cat("\n\n") ->
+fname
+
 if (! dir.exists(fpath))  dir.create(fpath)
 if (! file.exists(fname)) save(weatherAUS, file=fname)
 
@@ -285,16 +294,6 @@ our dataset for the more serious data wrangling.
 We can observe with some simple commands that the \Sexpr{dsname}
 dataset has \Sexpr{format(nrow(ds),big.mark=",")} observations of
 \Sexpr{ncol(ds)} variables.
-
-<<dtmpl:sizes>>=
-## DATA OBSERVATION
-
-# Basic size information.
-
-dim(ds)  %>% comcat()
-nrow(ds) %>% comcat()
-ncol(ds) %>% comcat()
-@ 
 
 The \Sexpr{ncol(ds)} variables observed in the dataset can be readily
 observed using \Sexpr{Rfunction(glimpse)}.
