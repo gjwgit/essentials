@@ -35,7 +35,7 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2016 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -202,7 +202,7 @@ te.risk   <- ds[test,][[risk]]       %T>% {head(., 20) %>% print()}
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2016 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -482,7 +482,7 @@ rocChart(te.prob, te.target)
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2016 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -734,7 +734,7 @@ rocChart(te.prob, te.target)
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2016 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
