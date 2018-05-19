@@ -1,0 +1,260 @@
+<<setup_options, include=FALSE>>=
+library(knitr)
+library(xtable)
+library(magrittr)
+library(Hmisc)
+
+set.seed(42)
+
+library(extrafont)
+loadfonts()
+opts_chunk$set(dev='cairo_pdf') # Embedded fonts
+
+opts_chunk$set(cache=FALSE)
+
+opts_chunk$set(out.width='\\textwidth')
+opts_chunk$set(fig.align='center')
+
+opts_chunk$set(src.top=NULL)
+opts_chunk$set(src.bot=NULL)
+opts_chunk$set(out.lines=6)
+opts_chunk$set(out.truncate=64)
+orig.options <- options(width=63)
+
+opts_chunk$set(fig.path=sprintf("figures/%s/", Module))
+opts_chunk$set(cache.path=sprintf("cache/%s/", Module))
+opts_chunk$set(bib.file=paste0(sub(":", "_", Module), ".bib"))
+
+# This is not too dark on a good printer and stands out okay.
+# Basically 231 decimal and 0.906 proprtionately.
+opts_chunk$set(background='#E7E7E7')
+# Following is quite light - too light on a good printer.
+# opts_chunk$set(background='#F7F7F7')
+
+# Leave code as I have formatted it.
+
+opts_chunk$set(tidy=FALSE)
+
+# Hooks
+
+# Allow auto crop of base graphics plots when crop=TRUE.
+
+knit_hooks$set(crop=hook_pdfcrop)
+
+# Truncate long lines and long output
+
+hook_output <- knit_hooks$get("output")
+hook_source <- knit_hooks$get("source")
+knit_hooks$set(output=function(x, options) 
+{
+  if (options$results != "asis")
+  {
+    # Split string into separate lines.
+    x <- unlist(stringr::str_split(x, "\n"))
+    # Trim to the number of lines specified.
+    if (!is.null(n <- options$out.lines)) 
+    {
+      if (length(x) > n) 
+      {
+        # Truncate the output.
+        x <- c(head(x, n), "....\n")
+      }
+    }
+    # Truncate each line to length specified.
+    if (!is.null(m <- options$out.truncate))
+    {
+      len <- nchar(x)
+      x[len>m] <- paste0(substr(x[len>m], 0, m-3), "...")
+    }
+    # Paste lines back together.
+    x <- paste(x, collapse="\n")
+    # Replace ' = ' with '=' - my preference. Hopefully won't 
+    # affect things inappropriately.
+    x <- gsub(" = ", "=", x)
+  }
+  hook_output(x, options)
+},
+source=function(x, options)
+{
+  # Split string into separate lines.
+  x <- unlist(stringr::str_split(x, "\n"))
+  # Trim to the number of lines specified.
+  if (!is.null(n <- options$src.top)) 
+  {
+    if (length(x) > n) 
+    {
+      # Truncate the output.
+      if (is.null(m <-options$src.bot)) m <- 0
+      x <- c(head(x, n+1), "\n....\n", tail(x, m+2)) 
+   }
+  }
+  # Paste lines back together.
+  x <- paste(x, collapse="\n")
+  hook_source(x, options)
+})
+
+# Optionally allow R Code chunks to be environments so we can refer to them.
+
+knit_hooks$set(rcode=function(before, options, envir) 
+{
+  if (before)
+    sprintf('\\begin{rcode}\\label{%s}\\hfill{}', options$label)
+  else
+    '\\end{rcode}'
+})
+
+# Do some processing for generating apropriate LaTeX. We could do this also
+# for \Rpackages and first time be sure to cite.
+
+Rfunction.seen <- c()
+Rfunction <- function(fn, pkg=NULL, only.package=FALSE,
+                      index=TRUE, show.package=TRUE, 
+                      add.seen=TRUE, show.paren=TRUE,
+                      bf=FALSE, 
+                      DefnOp=FALSE, Defn=FALSE, 
+                      PkgOp=FALSE, Pkg=FALSE)
+{
+  if (Defn)   {show.package <- FALSE; bf <- TRUE}
+  if (DefnOp) {show.paren <- FALSE; show.package <- FALSE; bf <- TRUE}
+  if (PkgOp)  {show.paren=FALSE; only.package <- TRUE; bf <- TRUE}
+  if (Pkg)    {only.package <- TRUE; bf <- TRUE}
+  
+  lt <- Hmisc::latexTranslate
+  fn <- as.character(substitute(fn))
+  if (is.null(pkg))
+    pkg <- utils:::index.search(fn, find.package(loadedNamespaces())) %>%
+      stringr::str_replace("/[^/]+/[^/]+$", "") %>%
+      stringr::str_replace("^.*/", "") %>%
+      '['(1)
+  if (! length(pkg) || is.na(pkg)) stop("Function '", fn, "' not found in any package.")
+  first <- add.seen & ! (fn %in% Rfunction.seen)
+  if (add.seen) Rfunction.seen <<-  union(Rfunction.seen, fn)
+  stringr::str_c(if (index) stringr::str_c("\\index{", lt(fn), 
+                                           if (show.paren) "()",
+                                           " (", lt(pkg), ")",
+                                           if (bf) "|textbf",
+                                           "}"),
+                 if (index) stringr::str_c("\\index{", lt(pkg), 
+                                           " (package)!", lt(fn), 
+                                           if (show.paren) "()", 
+                                           if (bf) "|textbf",
+                                           "}"),
+                 
+                 if (only.package)
+                   lt(pkg)
+                 else
+                   stringr::str_c(if (show.package) # Colours tried: orange gray!75
+                                    stringr::str_c("\\textcolor{gray!75}{\\texttt{", lt(pkg), "::}}"),
+                                  "\\texttt{", 
+                                  # Colours tried first: green black \\hlkwd
+                                  # Colours tried not first: \\hlkwd black
+                                  # if (first) "\\hlkwd" else "\\textcolor{black}",
+                                  # "{\\textbf{", lt(fn), if (show.paren) "()", "}}}")
+                                  # \\hlkwd does not stand out enough.
+                                  # if (first) "\\textbf{\\textcolor[HTML]{CF4F4F}",
+                                  if (first) "\\textbf{\\textcolor[HTML]{EF2D2D}",
+                                  "{", lt(fn), if (show.paren) "()", "}}",
+                                  if (first) "}"))
+}
+
+# Copied 150628 verbatim from Rfunction.
+
+Rdataset.seen <- c()
+Rdataset <- function(ds, pkg=NULL, only.package=FALSE,
+                      index=TRUE, show.package=TRUE, 
+                      add.seen=TRUE, show.paren=FALSE,
+                      bf=FALSE, 
+                      DefnOp=FALSE, Defn=FALSE, 
+                      PkgOp=FALSE, Pkg=FALSE)
+{
+  if (Defn)   {show.package <- FALSE; bf <- TRUE}
+  if (DefnOp) {show.paren <- FALSE; show.package <- FALSE; bf <- TRUE}
+  if (PkgOp)  {show.paren=FALSE; only.package <- TRUE; bf <- TRUE}
+  if (Pkg)    {only.package <- TRUE; bf <- TRUE}
+  
+  lt <- Hmisc::latexTranslate
+  ds <- as.character(substitute(ds))
+  if (is.null(pkg))
+    pkg <- utils:::index.search(ds, find.package(loadedNamespaces())) %>%
+      stringr::str_replace("/[^/]+/[^/]+$", "") %>%
+      stringr::str_replace("^.*/", "") %>%
+      '['(1)
+  if (! length(pkg) || is.na(pkg)) stop("Dataset '", ds, "' not found in any package.")
+  first <- add.seen & ! (ds %in% Rdataset.seen)
+  if (add.seen) Rdataset.seen <<-  union(Rdataset.seen, ds)
+  stringr::str_c(if (index) stringr::str_c("\\index{", lt(ds), 
+                                           if (show.paren) "()",
+                                           " (", lt(pkg), ")",
+                                           if (bf) "|textbf",
+                                           "}"),
+                 if (index) stringr::str_c("\\index{", lt(pkg), 
+                                           " (package)!", lt(ds), 
+                                           if (show.paren) "()", 
+                                           if (bf) "|textbf",
+                                           "}"),
+                 
+                 if (only.package)
+                   lt(pkg)
+                 else
+                   stringr::str_c(if (show.package) # Colours tried: orange gray!75
+                                    stringr::str_c("\\textcolor{gray!75}{\\texttt{", lt(pkg), "::}}"),
+                                  "\\texttt{", 
+                                  # Colours tried first: green black \\hlkwd
+                                  # Colours tried not first: \\hlkwd black
+                                  # if (first) "\\hlkwd" else "\\textcolor{black}",
+                                  # "{\\textbf{", lt(fn), if (show.paren) "()", "}}}")
+                                  # \\hlkwd does not stand out enough.
+                                  # if (first) "\\textbf{\\textcolor[HTML]{CF4F4F}",
+                                  #if (first) "\\textbf{\\textcolor[HTML]{EF2D2D}",
+                                  "{", lt(ds), if (show.paren) "()", "}}",
+                                  #if (first) "}"
+                                  ))
+}
+
+Rpackage.seen <- c()
+Rpackage <- function(pkg, cite=TRUE, add.seen=TRUE)
+{
+  lt <- Hmisc::latexTranslate
+  pkg <- as.character(substitute(pkg))
+  first <- ! (pkg %in% Rpackage.seen)
+  if (add.seen & cite) Rpackage.seen <<-  union(Rpackage.seen, pkg)
+  # Colours tried: green black
+  stringr::str_c(if (first) "\\textcolor{black}",
+                 if (cite && first) "{\\Rcite" else "{\\Rpackage", 
+                 "{", lt(pkg), "}}")
+}
+
+Wikipedia.seen <- c()
+Wikipedia <- function(x, text=NULL)
+{
+  x <- as.character(substitute(x))
+  first <- ! (x %in% Wikipedia.seen)
+  Wikipedia.seen <<- union(Wikipedia.seen, x)
+  stringr::str_c(if (first) "\\textbf{",
+                 if (is.null(text)) stringr::str_c("\\Wikipedia{", x, "}"),
+                 if (!is.null(text)) stringr::str_c("\\Wikipedia[", x, "]{", text, "}"),
+                 if (first) "}")
+}
+
+testing <- function(fn)
+{
+  as.character(substitute(fn))
+}
+
+# Shortcuts to avoid embedded % parsed by ESS as comment.
+
+pipe.fn.nsp <- Rfunction('%>%', show.paren=FALSE)
+apipe.fn.nsp <- Rfunction('%<>%', show.paren=FALSE)
+tpipe.fn.nsp <- Rfunction('%T>%', show.paren=FALSE)
+
+timeTaken <- function(start, digits=2)
+{
+  taken <- now() - start
+  sprintf("%s %s", round(taken, digits=digits),
+          switch(attr(taken, "units"),
+                 secs="seconds",
+                 mins="minutes",
+                 stop("timeTaken: unknown unit ", attr(taken, "units"))))
+}
+@ 
+
