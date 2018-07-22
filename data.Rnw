@@ -424,7 +424,7 @@ ds %>%
 
 ds %>% 
   select(starts_with("rain_")) %>% 
-  names() %>%
+  names() %T>%
   print() ->
 vnames
 
@@ -474,7 +474,7 @@ compass <- c("N", "NNE", "NE", "ENE",
 
 ds %>% 
   select(contains("_dir")) %>% 
-  names() %>%
+  names() %T>%
   print() ->
 vnames
 
@@ -525,7 +525,10 @@ ds[cvars] %>% sapply(class)
 
 # Note the available variables.
 
-vars <- names(ds) %>% print()
+ds %>%
+  names() %T>%
+  print() ->
+vars
 
 # Note the target variable.
 
@@ -533,7 +536,10 @@ target <- "rain_tomorrow"
 
 # Place the target variable at the beginning of the vars.
 
-vars <- c(target, vars) %>% unique() %>% print()
+c(target, vars) %>%
+  unique() %T>%
+  print() ->
+vars
 
 # Note the risk variable - measures the severity of the outcome.
 
@@ -547,7 +553,7 @@ id <- c("date", "location")
 
 # Initialise ignored variables: identifiers and risk.
 
-ignore <- union(id, if (exists("risk")) risk) %>% print()
+ignore <- union(id, if (exists("risk")) risk) %T>% print()
 
 # Heuristic for indentifiers to possibly ignore.
 
@@ -555,13 +561,13 @@ ds[vars] %>%
   sapply(function(x) x %>% unique() %>% length()) %>%
   equals(nrow(ds)) %>%
   which() %>%
-  names() %>%
+  names() %T>%
   print() ->
 ids
 
 # Add them if any to the variables to be ignored for modelling.
 
-ignore <- union(ignore, ids) %>% print()
+ignore <- union(ignore, ids) %T>% print()
 
 # Identify variables with only missing values.
 
@@ -569,13 +575,13 @@ ds[vars] %>%
   sapply(function(x) x %>% is.na %>% sum) %>%
   equals(nrow(ds)) %>%
   which() %>%
-  names() %>%
+  names() %T>%
   print() ->
 missing
 
 # Add them if any to the variables to be ignored for modelling.
 
-ignore <- union(ignore, missing) %>% print()
+ignore <- union(ignore, missing) %T>% print()
 
 # Identify a threshold above which proportion missing is fatal.
 
@@ -587,13 +593,13 @@ ds[vars] %>%
   sapply(function(x) x %>% is.na() %>% sum()) %>%
   '>'(missing.threshold*nrow(ds)) %>%
   which() %>%
-  names() %>%
+  names() %T>%
   print() ->
 mostly
 
 # Add them if any to the variables to be ignored for modelling.
 
-ignore <- union(ignore, mostly) %>% print()
+ignore <- union(ignore, mostly) %T>% print()
 
 # Identify a threshold above which we have too many levels.
 
@@ -608,26 +614,26 @@ ds[vars] %>%
   sapply(function(x) ds %>% extract2(x) %>% levels() %>% length()) %>%
   '>='(levels.threshold) %>%
   which() %>%
-  names() %>%
+  names() %T>%
   print() ->
 too.many
 
 # Add them if any to the variables to be ignored for modelling.
 
-ignore <- union(ignore, too.many) %>% print()
+ignore <- union(ignore, too.many) %T>% print()
 
 # Identify variables that have a single value.
 
 ds[vars] %>%
   sapply(function(x) all(x == x[1L])) %>%
   which() %>%
-  names() %>%
+  names() %T>%
   print() ->
 constants 
 
 # Add them if any to the variables to be ignored for modelling.
 
-ignore <- union(ignore, constants) %>% print()
+ignore <- union(ignore, constants) %T>% print()
 
 # Note which variables are numeric.
 
@@ -636,7 +642,7 @@ vars %>%
   '['(ds, .) %>%
   sapply(is.numeric) %>% 
   which() %>%
-  names() %>%
+  names() %T>%
   print() ->
 numc
 
@@ -652,7 +658,7 @@ ds[numc] %>%
   mutate(var1=numc) %>% 
   gather(var2, cor, -var1) %>% 
   na.omit %>%
-  arrange(-abs(cor)) %>%
+  arrange(-abs(cor)) %T>%
   print() ->
 mc
 
@@ -662,7 +668,7 @@ correlated <- c("temp_3pm", "pressure_3pm", "temp_9am")
 
 # Add them if any to the variables to be ignored for modelling.
 
-ignore <- union(ignore, correlated) %>% print()
+ignore <- union(ignore, correlated) %T>% print()
 
 # Check the number of variables currently.
 
@@ -670,7 +676,7 @@ length(vars)
 
 # Remove the variables to ignore.
 
-vars <- setdiff(vars, ignore) %>% print()
+vars <- setdiff(vars, ignore) %T>% print()
 
 # Confirm they are now ignored.
 
@@ -680,7 +686,7 @@ length(vars)
 
 # Formula for modelling.
 
-form <- formula(target %s+% " ~ .") %>% print()
+form <- formula(target %s+% " ~ .") %T>% print()
 
 # Use correlation search to identify key variables.
 # Could be useful to decide which variables to retain.
@@ -689,7 +695,7 @@ cfs(form, ds[vars])
 
 # Any variables to remove because not useful?
 
-vars %<>% setdiff(NULL) %>% print()
+vars %<>% setdiff(NULL) %T>% print()
 
 # Use information gain to identify variable importance.
 
@@ -699,7 +705,7 @@ information.gain(form, ds[vars]) %>%
 
 # Any variables to remove because not useful?
 
-vars %<>% setdiff(NULL) %>% print()
+vars %<>% setdiff(NULL) %T>% print()
 
 ## Further Wrangling ----------------
 
@@ -752,7 +758,7 @@ ds[vars] %>% is.na() %>% sum() %>% comcat()
 
 ds[vars] %>%
   na.omit() %>%
-  attr("na.action") %>%
+  attr("na.action") %T>%
   print() ->
 mo
 
@@ -776,7 +782,7 @@ ds[vars] %>% is.na() %>% sum() %>% comcat()
 ds[vars] %>%
   sapply(is.factor) %>%
   which() %>%
-  names() %>%
+  names() %T>%
   print() ->
 catc
 
@@ -867,13 +873,13 @@ ds %>%
 
 # Identify the input variables by name.
 
-inputs <- setdiff(vars, target) %>% print()
+inputs <- setdiff(vars, target) %T>% print()
 
 # Identify the input variables by index.
 
 inputi <- sapply(inputs, 
                  function(x) which(x == names(ds)), 
-                 USE.NAMES=FALSE) %>% print()
+                 USE.NAMES=FALSE) %T>% print()
 
 # Record the number of observations.
 
@@ -891,7 +897,7 @@ dim(ds[inputi]) %>% comcat()
 ds %>%
   sapply(is.numeric) %>%
   which() %>%
-  intersect(inputi) %>%
+  intersect(inputi) %T>%
   print() ->
 numi
 
@@ -899,7 +905,7 @@ numi
 
 ds %>% 
   names() %>% 
-  '['(numi) %>% 
+  '['(numi) %T>% 
   print() ->
 numc
 
@@ -908,7 +914,7 @@ numc
 ds %>%
   sapply(is.factor) %>%
   which() %>%
-  intersect(inputi) %>%
+  intersect(inputi) %T>%
   print() ->
 cati
 
@@ -916,7 +922,7 @@ cati
 
 ds %>% 
   names() %>% 
-  '['(cati) %>% 
+  '['(cati) %T>% 
   print() ->
 catc
 @ 
@@ -959,7 +965,7 @@ catc
 
 # Timestamp for the dataset - this is the general approach.
 
-dsdate  <- "_" %s+% format(Sys.Date(), "%Y%m%d") %>% print()
+dsdate  <- "_" %s+% format(Sys.Date(), "%Y%m%d") %T>% print()
 
 # We will use a fixed timestamp to identify our file for convenience.
 
@@ -968,7 +974,7 @@ dsdate <- "_20170702"
 # Filename for the saved dataset.
 
 dsrdata <- 
-  file.path(fpath, dsname %s+% dsdate %s+% ".RData") %>% 
+  file.path(fpath, dsname %s+% dsdate %s+% ".RData") %T>% 
   print()
 
 # Save relevant R objects to the binary RData file.
