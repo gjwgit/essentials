@@ -281,7 +281,7 @@ rm(weatherAUS)
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2017 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -336,7 +336,7 @@ enough.
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2017 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -861,7 +861,7 @@ ds %>%
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2017 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -953,7 +953,7 @@ catc
 # and is provided as is. It is published as an appendix to the 
 # book, Quick Start Data Science in R from CRC Press (pending).
 #
-# Copyright (c) 2014-2017 Togaware.com
+# Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
@@ -969,7 +969,7 @@ dsdate  <- "_" %s+% format(Sys.Date(), "%Y%m%d") %T>% print()
 
 # We will use a fixed timestamp to identify our file for convenience.
 
-dsdate <- "_20170702"
+dsdate <- "_20180702"
 
 # Filename for the saved dataset.
 
