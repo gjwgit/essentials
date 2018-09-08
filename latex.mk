@@ -92,6 +92,7 @@ vview: $(APP).vview
 xview: $(APP).xview
 
 %.view: %.eview
+	
 
 %.aview: %.pdf
 	acroread $<
