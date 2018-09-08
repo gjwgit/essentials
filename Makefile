@@ -208,8 +208,9 @@ model.R: model.Rnw
 %.oview: %.pdf %.R
 	okular $< &
 
-%.install: %.pdf %.R
-	$(CUPLOADS) -n $* &
+%.install: %.Rnw %.R %.pdf
+	rsync $^ togaware.com:webapps/essentials/
+	ssh togaware.com chmod a+r 'webapps/essentials/$*.*'
 
 %.watch:
 	@while inotifywait -e close_write $(ONEPAGER)/$*.Rnw; do make $*.pdf; make $*.install; date; done
