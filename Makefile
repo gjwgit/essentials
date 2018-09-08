@@ -11,7 +11,7 @@
 APP=tandf
 VER=0.0.0
 
-INC_BASE    = .
+INC_BASE    = scripts
 INC_R       = $(INC_BASE)/r.mk
 INC_KNITR   = $(INC_BASE)/knitr.mk
 INC_PANDOC  = $(INC_BASE)/pandoc.mk
