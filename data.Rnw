@@ -2,15 +2,15 @@
 \usepackage[british]{babel}
 \usepackage[colorlinks=true]{hyperref}
 \usepackage{geometry}
-\usepackage[parfill]{parskip}          % No indent. Add space between paragraphs.
+\usepackage[parfill]{parskip} % Space between paragraphs and no indent.
 \usepackage{xcolor}
-<<dtmpl:module, echo=FALSE, results="asis", purl=FALSE>>=
+<<template:module, echo=FALSE, results="asis", purl=FALSE>>=
 Module <- sub(".Rnw", "", current_input())
 cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 @ 
 \begin{document}
 
-<<dtmpl:00_setup, echo=FALSE>>=
+<<template:00_setup, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
 # Refer to the book, The Essentials of Data Science available
@@ -43,10 +43,10 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 # DOCVERSION
 @ 
 
-<<dtmpl:setup, child="mycourse.Rnw", purl=FALSE>>=
+<<template:setup, child="mycourse.Rnw", purl=FALSE>>=
 @ 
 
-<<dtmpl:attach_packages, echo=FALSE, message=FALSE, warning=FALSE>>=
+<<template:attach_packages, echo=FALSE, message=FALSE, warning=FALSE>>=
 # Load required packages from local library into R.
 
 library(tidyverse)    # ggplot2, tibble, tidyr, readr, purr, dplyr
@@ -65,7 +65,7 @@ library(xtable)       # Generate LaTeX tables.
 % follows we can refer to the dataset name. We insert the actual code
 % into the produced document below.
 
-<<dtmpl:10_ingest, echo=FALSE>>=
+<<template:10_ingest, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template
 #
 # Refer to the book, The Essentials of Data Science available
@@ -98,7 +98,7 @@ library(xtable)       # Generate LaTeX tables.
 # DOCVERSION
 @ 
 
-<<dtmpl:dataset_setup, echo=FALSE, message=FALSE>>=
+<<template:dataset_setup, echo=FALSE, message=FALSE>>=
 # Name of the dataset.
 
 dsname <- "weatherAUS"
@@ -151,7 +151,7 @@ sequentially.
 
 We collect here the packages used throughout this document.
 
-<<dtmpl:attach_packages, eval=FALSE, purl=FALSE>>=
+<<template:attach_packages, eval=FALSE, purl=FALSE>>=
 @ 
 
 \section{Data Sources}
@@ -188,7 +188,7 @@ function appropriate to the source dataset format is then used to
 ingest and store the dataset into a variable naming the dataset
 (\Rvariable{dsname}).
 
-<<dtmpl:dataset_setup, eval=FALSE, purl=FALSE>>=
+<<template:dataset_setup, eval=FALSE, purl=FALSE>>=
 @ 
 
 A generic variable (\Rvariable{ds}) will be used to reference the
@@ -201,7 +201,7 @@ practise even though in our case here it takes only a few seconds to
 download (depending on our Internet connection) and little time to
 parse to data.
 
-<<dtmpl:set_template_variable>>=
+<<template:set_template_variable>>=
 # Prepare the dataset for usage with our template.
 
 ds <- get(dsname)
@@ -211,7 +211,7 @@ It is useful to store the original dataset as an R Data file on disk
 and to then remove it to free up memory for processing. Saving to disk
 for this dataset takes just a second.
 
-<<dtmpl:store_dataset>>=
+<<template:store_dataset>>=
 # Save the dataset to disk as a binary R Data for backup.
 
 fpath <- "data"
@@ -238,7 +238,7 @@ takes a fraction of a second generally, compared to the several
 seconds to download and parse from the Internet, even for this
 relatively small dataset.
 
-<<dtmpl:load_dataset>>=
+<<template:load_dataset>>=
 # Test the loading of the saved dataset.
 
 load(fname) %>% print()
@@ -247,7 +247,7 @@ load(fname) %>% print()
 The result returned by \texttt{load()} is printed as the name of the
 object(s) loaded from the file. That worked, so we clean up.
 
-<<dtmpl:remove_dataset, echo=FALSE>>=
+<<template:remove_dataset, echo=FALSE>>=
 # Cleanup to save on memory.
 
 rm(weatherAUS)
@@ -255,7 +255,7 @@ rm(weatherAUS)
 
 \section{Data Observation and Preparation}
 
-<<dtmpl:20_observe, echo=FALSE>>=
+<<template:20_observe, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
 # Refer to the book, The Essentials of Data Science available
@@ -298,7 +298,7 @@ dataset has \Sexpr{format(nrow(ds),big.mark=",")} observations of
 The \Sexpr{ncol(ds)} variables observed in the dataset can be readily
 observed using \Sexpr{Rfunction(glimpse)}.
 
-<<dtmpl:glimpse>>=
+<<template:glimpse>>=
 # A glimpse into the dataset.
 
 glimpse(ds)
@@ -310,7 +310,7 @@ well defined and consistent naming scheme. The disadvantage is that
 the names now differ from the original, though the mapping is simple
 enough.
 
-<<dtmpl:30_prepare, echo=FALSE>>=
+<<template:30_prepare, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
 # Refer to the book, The Essentials of Data Science available
@@ -343,7 +343,7 @@ enough.
 # DOCVERSION
 @ 
 
-<<dtmpl:variable_normalisation>>=
+<<template:variable_normalisation>>=
 # Review the variables to optionally normalise their names.
 
 names(ds)
@@ -361,7 +361,7 @@ If we are reading the data from a CSV file then we can include the
 process within a pipeline, converting the column names, and saving the
 result into both the dataset named variable and the generic variable.
 
-<<dtmpl:readr_norm_var_names_pipeline>>=
+<<template:readr_norm_var_names_pipeline>>=
 dspath %>%
   read_csv() %T>%
   set_names(names(.) %>% normVarNames()) ->
@@ -373,7 +373,7 @@ data. Often this will be instructive as it is here. We note that
 \texttt{evaporation} and \texttt{sunshine} are often but not always
 missing.
 
-<<dtmpl:review>>=
+<<template:review>>=
 # Review the first few observations.
 
 head(ds) %>% print.data.frame()
@@ -393,7 +393,7 @@ Load the data into R{} and perform various operations on the data to
 shape it for analysis. Notice we comment sections which are specific
 to the weatherAUS dataset.
 
-<<dtmpl:wrangle>>=
+<<template:wrangle>>=
 # Traditional dataset summary to get started.
 
 summary(ds)
@@ -835,7 +835,7 @@ ds %>%
   theme(text=element_text(size=14))
 @ 
 
-<<dtmpl:40_meta, echo=FALSE>>=
+<<template:40_meta, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
 # Refer to the book, The Essentials of Data Science available
@@ -927,7 +927,7 @@ ds %>%
 catc
 @ 
 
-<<dtmpl:50_save, echo=FALSE>>=
+<<template:50_save, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
 # Refer to the book, The Essentials of Data Science available
