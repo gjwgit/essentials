@@ -1,0 +1,38 @@
+#!/usr/bin/Rscript
+#
+# -*- mode: ESS[S]; -*-
+#
+# Take data.R or model.R, split into individual files.
+
+library(magrittr)
+library(stringr)
+
+# For testing.
+
+args <- c("data.R") 
+args <- c("model.R") 
+
+args <- commandArgs(TRUE)
+
+if (length(args) != 1) stop("Expecting one argument.")
+
+infile <- args[1]
+
+if (! file.exists(infile)) stop("File not found:", infile)
+
+lines <- readLines(infile)
+start <- grep("^# Welcome to the Togaware Data Science", lines)
+end   <- c(start[-1] - 1, length(lines))
+  
+lines %>%
+  grep("^# File:", .) %>%
+  extract(lines, .) %>%
+  str_split(" ") %>%
+  sapply(function(x) magrittr::extract(x, 3)) ->
+files
+
+for (i in seq_along(files))
+{
+  writeLines(lines[start[i]:end[i]], files[i])
+}
+
