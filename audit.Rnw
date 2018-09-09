@@ -85,14 +85,19 @@ packages used to support the creation of this document.
 <<template:attach_packages, eval=FALSE, purl=FALSE>>=
 @
 
+\clearpage
 \section{Data Source}
 
 <<template:data_source, message=FALSE>>=
+# Original dataset source/location.
+
+dsorig <- file.path("https://rattle.togaware.com/audit.csv")
+
 # Name of the dataset.
 
 dsname <- "audit"
 
-# Identify the source location of the dataset.
+# Identify the Essentials location of the dataset.
 
 dsloc  <- "https://essentials.togaware.com"
 dspath <- file.path(dsloc, dsname %s+% ".csv") %T>% print()
@@ -103,22 +108,17 @@ dspath <- file.path(dsloc, dsname %s+% ".csv") %T>% print()
 <<template:data_ingest, message=FALSE>>=
 # Ingest the dataset.
 
-dspath %>%
-  read_csv() ->
-audit
-
-audit
+dspath %>% read_csv() %>% assign(dsname, ., envir=.GlobalEnv)
 @
 
-\section{Generic Template Variables}
+\section{Generic Template Variable and Initial View}
 
 <<template:set_template_variable>>=
-# Prepare the dataset for usage with template.
+# Store the dataset with a generic template variable name.
 
-ds <- get(dsname)
+dsname %>% get() %T>% print() -> ds
 @
 
-\clearpage
 \section{Normalise Variable Names}
 
 <<template:norm_var_names>>=
@@ -135,19 +135,79 @@ names(ds)[11:13] <- c("accounts", "adjustment", "adjusted")
 names(ds)
 @
 
+\section{Key Variables}
+
+<<template:identifiers>>=
+# Note any identifiers.
+
+id <- c("id")
+
+# Note the target variable.
+
+target <- "adjusted"
+
+# Note any risk variable - measures the severity of the outcome.
+
+risk <- "adjustment"
+@ 
+
 \clearpage
-\section{Data Wrangling}
+\section{Variables for Analysis}
 
-<<template:data_wrangling>>=
-# Ignore some variables.
+<<template:variable_roles, out.lines=NULL>>=
+# Note available variables ignoring identifiers and risk, with target first.
 
-ds %<>% select(-accounts, -marital, -occupation, -education)
-
-# Convert char to factor.
-
-ds %<>% mutate(gender=factor(gender))
+ds %>% 
+  names() %>% 
+  setdiff(c(id, risk)) %>%
+  c(target, .) %>%
+  unique() %T>% 
+  print() ->
+vars
 @
 
+\section{Variables to Ignore}
+
+<<template:ignore>>=
+# We will sometimes want to ignore specific variables.
+
+ignore <- c("accounts", "marital", "occupation", "education")
+
+# Remove variables to ignore from the variable list.
+
+vars %<>% setdiff(ignore) %T>% print()
+@
+
+\clearpage
+\section{Deal with Character Variables}
+
+<<template:characters>>=
+# Identify the character variables by index.
+
+chari <- ds[vars] %>% sapply(is.character) %>% which() %T>% print()
+
+# Identify the chracter variables by name.
+
+charc <- ds[vars] %>% names() %>% '['(chari) %T>% print()
+@
+
+\section{Character Variable Levels}
+
+<<template:character_levels>>=
+# Observe the unique levels.
+
+ds[charc] %>% sapply(unique)
+@ 
+
+\section{Characters to Factors}
+
+<<template:data_wrangling>>=
+# Convert all character to factor if determined appropriate.
+
+ds[charc] %<>% map(factor)
+@
+
+\clearpage
 \section{Data Observation}
 
 <<template:observe, out.lines=NULL>>=
@@ -156,7 +216,6 @@ ds %<>% mutate(gender=factor(gender))
 glimpse(ds)
 @
 
-\clearpage
 \section{Data Visualisation}
 
 <<template:visualise, fig.height=3>>=
@@ -168,57 +227,6 @@ ds %>%
   geom_density(alpha=0.55) +
   scale_y_continuous() +
   scale_x_continuous(labels=comma)
-@
-
-\section{Variables}
-
-<<template:variable_roles, out.lines=NULL>>=
-# Note the available variables.
-
-ds %>%
-  names() %T>%
-  print() ->
-vars
-@
-
-\clearpage
-\section{Target Variable}
-
-<<template:target, out.lines=NULL>>=
-# Note the target variable.
-
-target <- "adjusted"
-
-# Place the target variable at the beginning of the vars.
-
-c(target, vars) %>%
-  unique() %T>%
-  print() ->
-vars
-
-# Note the risk variable - measures the severity of the outcome.
-
-risk <- "adjustment"
-@
-
-\section{Identifiers}
-
-<<template:identifiers>>=
-# Note any identifiers.
-
-id <- c("id")
-@
-
-\section{Final Variable List}
-
-<<template:models_variables, out.lines=3>>=
-# Initialise ignored variables: identifiers and risk.
-
-ignore <- union(id, if (exists("risk")) risk) %T>% print()
-
-# Remove the variables to ignore.
-
-vars %<>% setdiff(ignore) %T>% print()
 @
 
 \clearpage
