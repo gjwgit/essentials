@@ -85,14 +85,19 @@ packages used to support the creation of this document.
 <<template:attach_packages, eval=FALSE, purl=FALSE>>=
 @ 
 
+\clearpage
 \section{Data Source}
 
 <<template:data_source, message=FALSE>>=
+# Original dataset source/location.
+
+dsorig <- file.path("https://rattle.togaware.com/weatherAUS.csv")
+
 # Name of the dataset.
 
 dsname <- "weatherAUS"
 
-# Identify the source location of the dataset.
+# Identify the Essentials location of the dataset.
 
 dsloc  <- "https://essentials.togaware.com"
 dspath <- file.path(dsloc, dsname %s+% ".csv") %T>% print()
@@ -103,21 +108,19 @@ dspath <- file.path(dsloc, dsname %s+% ".csv") %T>% print()
 <<template:data_ingest, message=FALSE>>=
 # Ingest the dataset.
 
-dspath %>%
-  read_csv() ->
-weatherAUS
-
-weatherAUS
+dspath %>% read_csv() %>% assign(dsname, ., envir=.GlobalEnv)
 @
 
-\section{Generic Template Variables}
+\clearpage
+\section{Generic Template Variable and Initial View}
 
 <<template:set_template_variable>>=
-# Prepare the dataset for usage with template.
+# Store the dataset with a generic template variable name.
 
-ds <- get(dsname)
+dsname %>% get() %T>% print() -> ds
 @ 
 
+\clearpage
 \section{Normalise Variable Names}
 
 <<template:norm_var_names>>=
@@ -128,13 +131,65 @@ names(ds) %<>% normVarNames() %T>% print()
 # Fix specific variable names.
 
 names(ds)[23] <- c("rainfall_tomorrow")
+
+# Check the names.
+
+names(ds)
+@
+
+\section{Key Variables}
+
+<<template:identifiers>>=
+# Note any identifiers.
+
+id <- c("date", "location")
+
+# Note the target variable.
+
+target <- "rain_tomorrow"
+
+# Note any risk variable - measures the severity of the outcome.
+
+risk <- "rainfall_tomorrow"
+@ 
+
+\clearpage
+\section{Variables for Analysis}
+
+<<template:variable_roles, out.lines=NULL>>=
+# Note available variables ignoring identifiers and risk, with target first.
+
+ds %>% 
+  names() %>% 
+  setdiff(c(id, risk)) %>%
+  c(target, .) %>%
+  unique() %T>% 
+  print() ->
+vars
+@
+
+\section{Variables to Ignore}
+
+<<template:ignore>>=
+# We will sometimes want to ignore specific variables.
+
+ignore <- NULL
+
+# Remove variables to ignore from the variable list.
+
+vars %<>% setdiff(ignore) %T>% print()
 @
 
 \clearpage
-\section{Data Wrangling}
+\section{Deal with Numeric Variables}
 
-<<template:data_wrangling>>=
-# Fix specific variables.
+In our dataset we might notice that evaporation and sunshine have come
+through as character variables. This is because there are only missing
+values in the first many observations and the heuristics interprets
+that as character variables.
+
+<<template:numeric_data>>=
+# Fix specific numeric variables.
 
 cvars <- c("evaporation", "sunshine")
 ds[cvars] %<>% sapply(as.numeric)
@@ -144,6 +199,36 @@ ds[cvars] %<>% sapply(as.numeric)
 ds %<>% drop_na(rain_tomorrow)
 @ 
 
+\clearpage
+\section{Deal with Character Variables}
+
+<<template:characters>>=
+# Identify the character variables by index.
+
+chari <- ds[vars] %>% sapply(is.character) %>% which() %T>% print()
+
+# Identify the chracter variables by name.
+
+charc <- ds[vars] %>% names() %>% '['(chari) %T>% print()
+@
+
+\section{Character Variable Levels}
+
+<<template:character_levels>>=
+# Observe the unique levels.
+
+ds[charc] %>% sapply(unique)
+@ 
+
+\section{Characters to Factors}
+
+<<template:data_wrangling>>=
+# Convert all character to factor if determined appropriate.
+
+ds[charc] %<>% map(factor)
+@
+
+\clearpage
 \section{Data Observation}
 
 <<template:observe, out.lines=NULL>>=
@@ -165,57 +250,6 @@ ds %>%
   ggplot(aes(x=temp_3pm, colour=location, fill=location)) +
   geom_density(alpha=0.55)
 @ 
-
-\section{Variables}
-
-<<template:variable_roles, out.lines=NULL>>=
-# Note the available variables.
-
-ds %>%
-  names() %T>%
-  print() ->
-vars
-@ 
-
-\clearpage
-\section{Target Variable}
-
-<<template:target, out.lines=NULL>>=
-# Note the target variable.
-
-target <- "rain_tomorrow"
-
-# Place the target variable at the beginning of the vars.
-
-c(target, vars) %>%
-  unique() %T>%
-  print() ->
-vars
-
-# Note the risk variable - measures the severity of the outcome.
-
-risk <- "rainfall_tomorrow"
-@ 
-
-\section{Identifiers}
-
-<<template:identifiers>>=
-# Note any identifiers.
-
-id <- c("date", "location")
-@ 
-
-\section{Final Variable List}
-
-<<template:models_variables, out.lines=3>>=
-# Initialise ignored variables: identifiers and risk.
-
-ignore <- union(id, if (exists("risk")) risk) %T>% print()
-
-# Remove the variables to ignore.
-
-vars %<>% setdiff(ignore) %T>% print()
-@
 
 \clearpage
 \section{Model Formula}
