@@ -31,7 +31,7 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 # 
 # The template is under regular revision and improvement
 # and is provided as is. It is published as an appendix to the 
-# book, Quick Start Data Science in R from CRC Press (pending).
+# book, Essentials of Data Science from CRC Press.
 #
 # Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
@@ -159,14 +159,14 @@ risk <- "rainfall_tomorrow"
 <<template:variable_roles, out.lines=NULL>>=
 # Note available variables ignoring identifiers and risk, with target first.
 
-ds %>% 
+ds %>%
   names() %>% 
   setdiff(c(id, risk)) %>%
   c(target, .) %>%
   unique() %T>% 
   print() ->
 vars
-@
+@ 
 
 \section{Variables to Ignore}
 
@@ -178,7 +178,7 @@ ignore <- NULL
 # Remove variables to ignore from the variable list.
 
 vars %<>% setdiff(ignore) %T>% print()
-@
+@ 
 
 \clearpage
 \section{Deal with Numeric Variables}
@@ -210,7 +210,7 @@ chari <- ds[vars] %>% sapply(is.character) %>% which() %T>% print()
 # Identify the chracter variables by name.
 
 charc <- ds[vars] %>% names() %>% '['(chari) %T>% print()
-@
+@ 
 
 \section{Character Variable Levels}
 
@@ -249,7 +249,7 @@ ds %>%
   select(temp_3pm, location) %>%
   ggplot(aes(x=temp_3pm, colour=location, fill=location)) +
   geom_density(alpha=0.55)
-@ 
+@
 
 \clearpage
 \section{Model Formula}
