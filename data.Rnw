@@ -34,7 +34,7 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 # 
 # The template is under regular revision and improvement
 # and is provided as is. It is published as an appendix to the 
-# book, Quick Start Data Science in R from CRC Press (pending).
+# book, Essentials of Data Science from CRC Press (pending).
 #
 # Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
@@ -279,7 +279,7 @@ rm(weatherAUS)
 # 
 # The template is under regular revision and improvement
 # and is provided as is. It is published as an appendix to the 
-# book, Quick Start Data Science in R from CRC Press (pending).
+# book, Essentials of Data Science from CRC Press.
 #
 # Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
@@ -334,7 +334,7 @@ enough.
 # 
 # The template is under regular revision and improvement
 # and is provided as is. It is published as an appendix to the 
-# book, Quick Start Data Science in R from CRC Press (pending).
+# book, Essentials of Data Science from CRC Press.
 #
 # Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
@@ -859,7 +859,7 @@ ds %>%
 # 
 # The template is under regular revision and improvement
 # and is provided as is. It is published as an appendix to the 
-# book, Quick Start Data Science in R from CRC Press (pending).
+# book, Essentials of Data Science from CRC Press.
 #
 # Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
@@ -951,7 +951,7 @@ catc
 # 
 # The template is under regular revision and improvement
 # and is provided as is. It is published as an appendix to the 
-# book, Quick Start Data Science in R from CRC Press (pending).
+# book, Essentials of Data Science from CRC Press.
 #
 # Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
