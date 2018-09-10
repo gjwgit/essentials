@@ -59,3 +59,6 @@ endif
 %.install: %.Rnw %.R %.pdf
 	rsync $^ togaware.com:webapps/essentials/
 	ssh togaware.com chmod a+r 'webapps/essentials/$*.*'
+
+clean::
+	rm -f ports.xlsx
