@@ -1,0 +1,566 @@
+\documentclass[a4paper]{article}
+\usepackage[british]{babel}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\usepackage[parfill]{parskip} % Space between paragraphs and no indent.
+\usepackage{xcolor}
+<<template:module, echo=FALSE, results="asis", purl=FALSE>>=
+Module <- sub(".Rnw", "", current_input())
+cat(paste0("\\newcommand{\\Module}{", Module, "}"))
+@
+\begin{document}
+
+<<template:setup, echo=FALSE>>=
+# Welcome to the Togaware Data Science End-to-End Template Ports ----
+#
+# Refer to the book, The Essentials of Data Science available from
+# Amazon at http://bit.ly/essentials_data_science, and the web site
+# https://essentials.togaware.com for more details.
+#
+# Ports Dataset.
+#
+# This template provides a starting point for the
+# data scientist exploring a new dataset. By no means
+# is it the end point of the data science journey.
+#
+# This R script is automatically extracted from a knitr
+# file with a .Rnw extension. That file includes a broader
+# narrative and explanation of the journey through our data.
+# Before our own journey into literate programming we can
+# make use of these R scripts as our templates for data science.
+#
+# The template is under regular revision and improvement
+# and is provided as is. It is published as an appendix to the
+# book, Essentials of Data Science in R from CRC Press.
+#
+# Copyright (c) 2014-2018 Togaware.com
+# Authored by and feedback to Graham.Williams@togaware.com
+# License: Creative Commons Attribution-ShareAlike CC BY-SA
+#
+# DOCVERSION
+@
+
+<<template:attach_packages, echo=FALSE, message=FALSE, warning=FALSE>>=
+# Load required packages from local library into R.
+
+library(magrittr)     # Pipe operator %>% %<>% %T>% equals().
+library(rattle)       # normVarNames().
+library(ROCR)         # Use prediction() for evaluation.
+library(rpart)        # Model: decision tree.
+library(scales)       # Include commas in numbers.
+library(stringi)      # String concat operator %s+%.
+library(tidyverse)    # ggplot2, tibble, tidyr, readr, purr, dplyr, stringr
+@
+
+% We actually set up the dataset here so that within the text that
+% follows we can refer to the dataset name. We insert the actual code
+% into the produced document below.
+
+<<template:dsname, echo=FALSE, message=FALSE, purl=FALSE>>=
+dsname <- "banking"
+@
+
+\title{Data Science Template\\
+  End-to-End \textbf{\Sexpr{dsname}} Analysis}
+\author{Graham Williams}
+\date{\today}
+\maketitle\thispagestyle{empty}
+
+This template provides a minimal example of a data science
+template. We will build a decision tree model to predict future events
+from historic observations of that event. In this case the event is
+whether a customer was found non-copmliant in an audit.
+
+The concept of templates for Data Science are developed in the book
+\href{https://bit.ly/essentials_data_science}{The Essentials of Data
+  Science} (2017).  The actual source files and scripts, with regular
+updates, available from the
+\href{htts://essentials.togaware.com}{Essentials web site}
+(\href{htts://essentials.togaware.com}{essentials.togaware.com}).
+
+As with all of our templates and reports we collect up front here the
+packages used to support the creation of this document.
+
+<<template:attach_packages, eval=FALSE, purl=FALSE>>=
+@
+
+\section{Data Source}
+
+<<template:data_source, message=FALSE>>=
+# Original dataset source/location.
+
+dsorig <- file.path("")
+
+# Name of the dataset.
+
+dsname <- "banking"
+
+# Identify the Essentials location of the dataset.
+
+dsloc  <- "https://essentials.togaware.com"
+dspath <- file.path(dsloc, dsname %s+% ".csv") %T>% print()
+@
+
+\section{Data Ingestion}
+
+<<template:data_ingest, message=FALSE>>=
+# Ingest the dataset.
+
+dspath %>% read_csv() %>% assign(dsname, ., envir=.GlobalEnv)
+
+get(dsname)
+@
+
+\section{Generic Template Variables}
+
+<<template:set_template_variable>>=
+# Prepare the dataset for usage with template.
+
+ds <- get(dsname)
+@
+
+\clearpage
+\section{Normalise Variable Names}
+
+<<template:norm_var_names>>=
+# Normalise the variable names.
+
+names(ds) %<>% normVarNames() %T>% print()
+@
+
+\clearpage
+\section{Initial Observations}
+
+<<template:glimpse, out.lines=NULL>>=
+# A glimpse into the dataset.
+
+glimpse(ds)
+@
+
+We observe plenty of character variables that we may want to consider
+conversion to factors. Many variables we can make sense of, but some
+not. Looks like y is the target 0/1. Are there any other outcome
+variables?
+
+\section{Observe Characters}
+
+<<template:characters>>=
+# Identify the character variables by index.
+
+ds %>%
+  sapply(is.character) %>%
+  which() %T>%
+  print() ->
+chari
+
+# Identify the chracter variables by name.
+
+ds %>% 
+  names() %>% 
+  '['(chari) %T>% 
+  print() ->
+charc
+
+# Observe the unique levels.
+
+ds[charc] %>% sapply(unique)
+@ 
+
+These all appear to be candidates for becoming factors. They would
+seem to be comprehensive in the levels, and so unlikely for there to
+be unrepresented levels in this dataset.
+
+\section{Data Wrangling}
+
+<<template:data_wrangling>>=
+# Convert character to factor.
+
+ds[charc] %<>% map(factor)
+@
+
+\section{Data Observation}
+
+<<template:observe, out.lines=NULL>>=
+# A glimpse into the dataset.
+
+glimpse(ds)
+@
+
+\clearpage
+\section{Data Visualisation}
+
+<<template:visualise_age, fig.height=3>>=
+# Visualise relationships in the data.
+
+ds %>%
+  select(age, y) %>%
+  ggplot(aes(x=age)) +
+  geom_density() +
+  facet_wrap(~y) +
+  scale_y_continuous() +
+  scale_x_continuous(labels=comma)
+@
+
+<<template:visualise_education, fig.height=3>>=
+# Visualise relationships in the data.
+
+ds %>%
+  select(education, y) %>%
+  ggplot(aes(x=y)) +
+  geom_density() +
+  facet_wrap(~education) +
+  scale_y_continuous()
+@
+
+\section{Variables}
+
+<<template:variable_roles, out.lines=NULL>>=
+# Note the available variables.
+
+ds %>%
+  names() %T>%
+  print() ->
+vars
+@
+
+\clearpage
+\section{Target Variable}
+
+<<template:target, out.lines=NULL>>=
+# Note the target variable.
+
+target <- "y"
+
+# Place the target variable at the beginning of the vars.
+
+c(target, vars) %>%
+  unique() %T>%
+  print() ->
+vars
+
+# Note the risk variable - measures the severity of the outcome.
+
+risk <- NULL
+@
+
+\section{Identifiers}
+
+There are no identifiers in this dataset.
+
+<<template:identifiers>>=
+# Note any identifiers.
+
+id <- NULL
+@
+
+\section{Final Variable List}
+
+<<template:models_variables, out.lines=3>>=
+# Initialise ignored variables: identifiers and risk.
+
+ignore <- union(id, if (exists("risk")) risk) %T>% print()
+
+# Remove the variables to ignore.
+
+vars %<>% setdiff(ignore) %T>% print()
+@
+
+\clearpage
+\section{Model Formula}
+
+<<template:model_formula>>=
+# Formula for modelling.
+
+ds[vars] %>%
+  formula() %T>%
+  print() ->
+form
+@
+
+\section{Target as a Categoric}
+
+<<template:target_as_categoric>>=
+# Ensure the target is categoric.
+
+ds[[target]] %<>% factor()
+@
+
+\section{Variables and Observations}
+
+<<template:ipnuts_nobs>>=
+# Identify the input variables by name.
+
+inputs <- setdiff(vars, target) %T>% print()
+
+# Record the number of observations.
+
+nobs <- nrow(ds) %T>% comcat()
+@
+
+\clearpage
+\section{Training Dataset}
+
+<<template:model_setup>>=
+# Initialise random numbers for repeatable results.
+
+seed <- 123
+set.seed(seed)
+
+# Partition the full dataset into three: train (70%), validate (15%), test (15%).
+
+nobs %>%
+  sample(0.70*nobs) %T>%
+  {length(.) %>% comma() %>% cat("Size of training dataset:", ., "\n")} ->
+train
+@
+
+\section{Validation Dataset}
+
+<<template:validation>>=
+# Create a validation dataset of 15% of the observations.
+
+nobs %>%
+  seq_len() %>%
+  setdiff(train) %>%
+  sample(0.15*nobs) %T>%
+  {length(.) %>% comma() %>% cat("Size of validation dataset:", ., "\n")} ->
+validate
+@
+
+\section{Test Dataset}
+
+<<template:test>>=
+# Create a testing dataset of 15% (the remainder) of the observations.
+
+nobs %>%
+  seq_len() %>%
+  setdiff(union(train, validate)) %T>%
+  {length(.) %>% comma() %>% cat("Size of validation dataset:", ., "\n")} ->
+test
+@
+
+\clearpage
+\section{Evaluation Subsets}
+
+<<template:evaluation_data>>=
+# Cache the various actual values for target and risk.
+
+tr_target <- ds[train,][[target]]    %T>% {head(., 15) %>% print()}
+
+va_target <- ds[validate,][[target]] %T>% {head(., 15) %>% print()}
+
+te_target <- ds[test,][[target]]     %T>% {head(., 15) %>% print()}
+@
+
+\section{Build Model: Decision Tree}
+
+<<template:rpart>>=
+# Splitting function: "anova" "poisson" "class" "exp"
+
+mthd <- "class"
+
+# Splitting function parameters.
+
+prms <- list(split="information")
+
+# Control the training.
+
+ctrl <- rpart.control(maxdepth=5)
+
+# Build the model
+
+m_rp <- rpart(form, ds[train, vars], method=mthd, parms=prms, control=ctrl)
+@
+
+\clearpage
+\section{Model Generic Variables}
+
+<<template:model_generics>>=
+# Capture the model in generic variables.
+
+model <- m_rp
+mtype <- "rpart"
+mdesc <- "Decision Tree"
+@
+
+\section{Review Model}
+
+<<template:model_review, out.lines=NULL>>=
+# Basic model structure.
+
+model
+@
+
+\clearpage
+\section{Visualise the Model}
+
+<<template:model_plot>>=
+# Visually expose the discovered knowledge.
+
+fancyRpartPlot(model)
+@
+
+\clearpage
+\section{Summary of Model}
+
+<<template:model_summary, fig.height=6, out.lines=40>>=
+# Complete model build summary.
+
+summary(model)
+@
+
+\clearpage
+\section{Variable Importance}
+
+<<template:varimp, fig.height=3>>=
+# Review which importance of the variables.
+
+ggVarImp(model)
+@
+
+\clearpage
+\section{Model Predictions on Validation}
+
+<<template:evaluate>>=
+# Predict on validation dataset to judge performance.
+
+model %>%
+  predict(newdata=ds[validate, vars], type="class") %>%
+  set_names(NULL) %T>%
+  {head(., 20) %>% print()} ->
+va_class
+
+model %>%
+  predict(newdata=ds[validate, vars], type="prob") %>%
+  .[,2] %>%
+  set_names(NULL) %>%
+  round(2) %T>%
+  {head(., 20) %>% print()} ->
+va_prob
+@
+
+\section{Overall Accuracy and Error}
+
+<<template:accuracy_error>>=
+# Overall accuracy and error.
+
+sum(va_class == va_target) %>%
+  divide_by(length(va_target)) %T>%
+  {
+    percent(.) %>%
+      sprintf("Overall accuracy = %s\n", .) %>%
+      cat()
+  } ->
+va_acc
+
+sum(va_class != va_target) %>%
+  divide_by(length(va_target)) %T>%
+  {
+    percent(.) %>%
+      sprintf("Overall error = %s\n", .) %>%
+      cat()
+  } ->
+va_err
+@
+
+\section{Confusion Matrix}
+
+<<template:confusion_matrix>>=
+# Basic comparison of prediction/actual as a confusion matrix.
+
+table(va_target, va_class, useNA="ifany", dnn=c("Actual", "Predicted"))
+
+# Comparison as percentages of all observations.
+
+errorMatrix(va_target, va_class) %T>%
+  print() ->
+va_matrix
+
+# Error rate and average of the class error rate.
+
+va_matrix %>%
+  diag() %>%
+  sum(na.rm=TRUE) %>%
+  subtract(100, .) %>%
+  sprintf("Overall error percentage = %s%%\n", .) %>%
+  cat()
+
+va_matrix[,"Error"] %>%
+  mean(na.rm=TRUE) %>%
+  sprintf("Averaged class error percentage = %s%%\n", .) %>%
+  cat()
+@
+
+\clearpage
+\section{Recall, Precision, F-Score}
+
+<<template:metrics>>=
+# Other performance metrics: recall, precision, and the F-score.
+
+va_rec <- (va_matrix[2,2]/(va_matrix[2,2]+va_matrix[2,1])) %T>%
+  {percent(.) %>% sprintf("Recall = %s\n", .) %>% cat()}
+
+va_pre <- (va_matrix[2,2]/(va_matrix[2,2]+va_matrix[1,2])) %T>%
+  {percent(.) %>% sprintf("Precision = %s\n", .) %>% cat()}
+
+va_fsc <- ((2 * va_pre * va_rec)/(va_rec + va_pre))  %T>%
+  {sprintf("F-Score = %.3f\n", .) %>% cat()}
+@
+
+\section{ROC Curve}
+
+<<template:roc>>=
+# Calculate the area under the curve (AUC).
+
+va_prob %>%
+  prediction(va_target) %>%
+  performance("auc") %>%
+  attr("y.values") %>%
+  .[[1]] %T>%
+  {
+    percent(.) %>%
+    sprintf("Percentage area under the ROC curve = %s\n", .) %>%
+    cat()
+  } ->
+va_auc
+
+# Calculate measures required to plot the ROC Curve.
+
+va_prob %>%
+  prediction(va_target) %>%
+  performance("tpr", "fpr") ->
+va_rates
+@
+
+\clearpage
+\section{ROC Curve Plot}
+
+<<template:roc_plot, fig.height=5>>=
+# Plot the ROC Curve.
+
+data_frame(tpr=attr(va_rates, "y.values")[[1]],
+           fpr=attr(va_rates, "x.values")[[1]]) %>%
+  ggplot(aes(fpr, tpr)) +
+  geom_line() +
+  annotate("text", x=0.875, y=0.125, vjust=0,
+           label=paste("AUC =", percent(va_auc))) +
+  labs(title="ROC - " %s+% mtype %s+% " - Validation Dataset",
+       x="False Positive Rate (1-Specificity)",
+       y="True Positive Rate (Sensitivity)")
+@
+
+\clearpage
+\section{Risk Chart}
+
+<<template:risk_chart, fig.height=6>>=
+# Risk chart.
+
+riskchart(va_prob, va_target) +
+  labs(title="Risk Chart - " %s+%
+         mtype %s+%
+         " - Validation Dataset") +
+  theme(plot.title=element_text(size=14))
+@
+
+\end{document}
+
