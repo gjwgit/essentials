@@ -31,7 +31,7 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 #
 # The template is under regular revision and improvement
 # and is provided as is. It is published as an appendix to the
-# book, Quick Start Data Science in R from CRC Press (pending).
+# book, Essentials of Data Science from CRC Press.
 #
 # Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
@@ -70,7 +70,7 @@ dsname <- "audit"
 This template provides a minimal example of a data science
 template. We will build a decision tree model to predict future events
 from historic observations of that event. In this case the event is
-whether a customer was found non-copmliant in an audit.
+whether a customer was found non-compliant in an audit.
 
 The concept of templates for Data Science are developed in the book
 \href{https://bit.ly/essentials_data_science}{The Essentials of Data
@@ -149,7 +149,7 @@ target <- "adjusted"
 # Note any risk variable - measures the severity of the outcome.
 
 risk <- "adjustment"
-@ 
+@
 
 \clearpage
 \section{Variables for Analysis}
@@ -157,7 +157,7 @@ risk <- "adjustment"
 <<template:variable_roles, out.lines=NULL>>=
 # Note available variables ignoring identifiers and risk, with target first.
 
-ds %>% 
+ds %>%
   names() %>% 
   setdiff(c(id, risk)) %>%
   c(target, .) %>%
@@ -197,7 +197,7 @@ charc <- ds[vars] %>% names() %>% '['(chari) %T>% print()
 # Observe the unique levels.
 
 ds[charc] %>% sapply(unique)
-@ 
+@
 
 \section{Characters to Factors}
 
