@@ -13,8 +13,8 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 <<template:00_setup, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template ----
 #
-# Refer to the book, The Essentials of Data Science available
-# from Amazon at https://amzn.to/2L35wPe, and the web site
+# Refer to the book, The Essentials of Data Science available from
+# Amazon at http://bit.ly/essentials_data_science, and the web site
 # https://essentials.togaware.com for more details.
 #
 # Australian Weather Dataset.
@@ -34,16 +34,13 @@ cat(paste0("\\newcommand{\\Module}{", Module, "}"))
 # 
 # The template is under regular revision and improvement
 # and is provided as is. It is published as an appendix to the 
-# book, Essentials of Data Science from CRC Press (pending).
+# book, Essentials of Data Science from CRC Press.
 #
 # Copyright (c) 2014-2018 Togaware.com
 # Authored by and feedback to Graham.Williams@togaware.com
 # License: Creative Commons Attribution-ShareAlike CC BY-SA 
 #
 # DOCVERSION
-@ 
-
-<<template:setup, child="mycourse.Rnw", purl=FALSE>>=
 @ 
 
 <<template:attach_packages, echo=FALSE, message=FALSE, warning=FALSE>>=
@@ -142,8 +139,8 @@ dspath %>%
 
 \section{Introduction}
 
-This template provides a guide to the typical sequence of steps a data
-scientist begins with in analyzing a new dataset. See
+This template provides a starting point for the typical sequence of
+steps a data scientist begins with in analyzing a new dataset. See
 \href{https://amzn.to/2L35wPe}{The Essentials of Data Science With R}
 (2017) for details. The sequence is extracted into separate files,
 corresponding to the logical steps along the way. Each can be run
