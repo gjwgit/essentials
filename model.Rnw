@@ -240,6 +240,8 @@ ctrl <- rpart.control(maxdepth=3	# 30
                   # , surrogatestyle=0	# 0
                       )
 
+# Build the model.
+
 m.rp <- rpart(form, ds[train, vars], method=mthd, parms=prms, control=ctrl)
 
 model  <- m.rp

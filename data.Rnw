@@ -1,3 +1,7 @@
+
+20181028 I THINK THE ONEPAGER VERSION IS MORE UP TO DATE BUT NEED TO
+ESSENTIALLY MERGE THE TWO VERSIONS INTO ONE.
+
 \documentclass[a4paper]{article}
 \usepackage[british]{babel}
 \usepackage[colorlinks=true]{hyperref}
@@ -65,8 +69,8 @@ library(xtable)       # Generate LaTeX tables.
 <<template:10_ingest, echo=FALSE>>=
 # Welcome to the Togaware Data Science Data Template
 #
-# Refer to the book, The Essentials of Data Science available
-# from Amazon at https://amzn.to/2L35wPe, and the web site
+# Refer to the book, The Essentials of Data Science available from
+# Amazon at http://bit.ly/essentials_data_science, and the web site
 # https://essentials.togaware.com for more details.
 #
 # Australian Weather Dataset.
@@ -114,7 +118,7 @@ dsloc <- "data"
 
 dsname %s+% ".csv" %>%
   file.path(dsloc, .) %T>%
-  cat("Dataset:", . "\n\n") %T>%
+  cat("Dataset:", ., "\n\n") %T>%
   {
      paste("head", .) %>%
      system(intern=TRUE) %>%
@@ -345,9 +349,21 @@ enough.
 
 names(ds)
 
+# Capture the original variable names for use later on.
+
+onames <- names(ds)
+
 # Normalise the variable names.
 
 names(ds) %<>% normVarNames() %T>% print()
+
+# Tune specific variable names: remove prefix if appropriate.
+
+if (FALSE)
+{
+  names(ds) %>% str_detect("_") -> uvars
+  names(ds)[uvars] %<>% str_replace("^[^_]*_", '') %T>% print()
+}
 
 # Confirm the results are as expected.
 
@@ -518,6 +534,21 @@ ds[cvars] %<>% sapply(as.numeric)
 
 ds[cvars] %>% sapply(class)
 
+# Convert all remaining character to factor.
+
+ds %>%
+  sapply(class) %>%
+  '=='("character") %>%
+  which() %>%
+  names() %T>%
+  print() ->
+cvars
+
+ds[cvars] %<>% 
+  lapply(factor) %>% 
+  data.frame() %>% 
+  tbl_df()
+
 ## Identifiers and Targets ----------------
 
 # Note the available variables.
@@ -683,7 +714,10 @@ length(vars)
 
 # Formula for modelling.
 
-form <- formula(target %s+% " ~ .") %T>% print()
+ds[vars] %>% 
+  formula() %>% 
+  print() ->
+form
 
 # Use correlation search to identify key variables.
 # Could be useful to decide which variables to retain.

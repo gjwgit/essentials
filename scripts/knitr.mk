@@ -8,11 +8,16 @@
 #
 ########################################################################
 
+########################################################################
+# HELP
+
 define KNITR_HELP
 KnitR Dcoument Management:
 
-  %.tex		Generate LaTeX from .Rnw file
-  %.R		Generate R script from .Rnw file
+  %.tex		Generate LaTeX from .Rnw file.
+  %.R		Generate R script from .Rnw file.
+  %.run	        Run the extracted R script.
+  %.watch	Continually update the PDF file as Rnw changes.
 
 endef
 export KNITR_HELP
@@ -21,6 +26,7 @@ help::
 	@echo "$$KNITR_HELP"
 
 ########################################################################
+# RULES
 
 .PRECIOUS: %.tex
 %.tex: %.Rnw %.R $(RNW_SUPPORT)
@@ -30,6 +36,10 @@ help::
 %.R: %.Rnw
 	R -e "require(knitr); purl('$<')"
 	perl -ni -e 'print if !/^## ----/' $@
+
+.PHONY: %.run
+%.run: %.R
+	Rscript $^
 
 %.watch:
 	@while inotifywait -e close_write $*.Rnw; do make $*.pdf; date; done
